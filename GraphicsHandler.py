@@ -14,6 +14,7 @@ class mainPanel(tk.Tk):
         self.button['command'] = self.open_edit_panel
         self.button.pack()
 
+
     def open_edit_panel(self):
         self.editPanel = editPanel()
 
@@ -22,11 +23,29 @@ class editPanel(tk.Toplevel):
         super().__init__()
 
         self.title("Edit panel")
-        self.geometry("300x300")
+        self.geometry("300x90")
+
+        descLabel = tk.Label(self, text="Description")
+        descEntry = tk.Entry(self, width=31, bg="gray")
+
+        accLabel = tk.Label(self, text="Account Name")
+        accEntry = tk.Entry(self, width=31, bg="gray")
+
+        passLabel = tk.Label(self, text="Account Password")
+        passEntry = tk.Entry(self, width=31, bg="gray")
+
+        descLabel.grid(row=0, column=0)
+        descEntry.grid(row=0, column=1)
+        accLabel.grid(row=1, column=0)
+        accEntry.grid(row=1, column=1)
+        passLabel.grid(row=2, column=0)
+        passEntry.grid(row=2, column=1)
 
         self.button = tk.Button(self, text="Close Edit Panel")
         self.button['command'] = self.close_edit_panel
-        self.button.pack()
+        self.button.grid(row=3, column=1, sticky='w')
+
+        self.resizable(False, False)
 
     def close_edit_panel(self):
         self.destroy()

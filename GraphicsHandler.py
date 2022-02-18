@@ -1,3 +1,4 @@
+import tkinter.filedialog
 import tkinter as tk
 
 class mainPanel(tk.Tk):
@@ -10,13 +11,28 @@ class mainPanel(tk.Tk):
         self.label = tk.Label(self, text = "This is the placeholder Main Panel")
         self.label.pack()
 
-        self.button = tk.Button(self, text = "Open Edit Panel")
+        self.button = tk.Button(self, text="Open Edit Panel")
         self.button['command'] = self.open_edit_panel
         self.button.pack()
+
+        self.button = tk.Button(self, text = "Open A File")
+        self.button['command'] = self.open_file
+        self.button.pack(side=tk.TOP, pady="10")
+
+        self.button = tk.Button(self, text="Save A File")
+        self.button['command'] = self.save_file
+        self.button.pack(side=tk.TOP)
 
 
     def open_edit_panel(self):
         self.editPanel = editPanel()
+
+    def open_file(self):
+        self.filename = tk.filedialog.askopenfilename(initialdir = "", title="Select the File to Open", filetypes=(("Database Files", ".xyz"), ("All Files", "*")))
+
+    def save_file(self):
+        print("not functional yet")
+
 
 class editPanel(tk.Toplevel):
     def __init__(self):

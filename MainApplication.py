@@ -14,7 +14,7 @@ class mainPanel(tk.Tk):
 
         self.databaseContents = None
         self.accountInfo = []
-        self.title("Main panel")
+        self.title("SecuriSimplex Password Manager")
         self.geometry("700x700")
 
         self.label = tk.Label(self, text = "This is the placeholder Main Panel")
@@ -93,6 +93,9 @@ class editPanel(tk.Toplevel):
 
     def close_edit_panel(self):
         self.destroy()
+
+    def save_details(self):
+        print("not implemented yet")
 
 if __name__ == "__main__":
     app = mainPanel()

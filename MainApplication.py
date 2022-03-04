@@ -19,11 +19,11 @@ class mainPanel(tk.Tk):
 
         self.label = tk.Label(self, text = "This is the placeholder Main Panel")
         self.label.pack()
-
+        """
         self.button = tk.Button(self, text="Open Edit Panel", relief="groove")   #Open Edit Panel (Placeholder)
         self.button['command'] = self.open_edit_panel
         self.button.pack()
-
+        """
         self.EditSaveFrame = tk.Frame(self, height="100", relief="ridge", pady="5")  #Creating frame for open file and save file widgets
         self.EditSaveFrame.pack(fill="x", padx="5") #Fill entire x axis
         self.EditSaveFrame.pack_propagate(0) #Force the width and height
@@ -41,8 +41,8 @@ class mainPanel(tk.Tk):
         self.dataFrame.pack_propagate(0)  # Force the width and height
 
 
-    def open_edit_panel(self):
-        self.editPanel = editPanel()
+    def open_edit_panel(self, num):
+        self.editPanel = editPanel(self.databaseContents, num)
 
     def open_file(self):
         self.filename = tk.filedialog.askopenfilename(initialdir = ".", title="Select the File to Open", filetypes=(("All Files", "*"), ("Database Files", ".xyz"), ))
@@ -56,14 +56,14 @@ class mainPanel(tk.Tk):
     def create_database_panel(self):
         if self.databaseContents is not None:
             for num in range(0, len(self.databaseContents)):
-                self.accountInfo.append(tk.Button(self.dataFrame, bg="white", text=self.databaseContents[num][0], height="5", relief="ridge", pady="5"))  # Creating frame for data entries
+                self.accountInfo.append(tk.Button(self.dataFrame, bg="white", text=self.databaseContents[num][0], height="5", relief="ridge", pady="5", command=lambda a=num: self.open_edit_panel(a)))  # Creating frame for data entries
             for num in range(0, len(self.accountInfo)):
                 self.accountInfo[num].pack(fill="x", expand=False, padx="5")  # Fill entire x axis
                 self.accountInfo[num].pack_propagate(0)  # Force the width and height
 
 
 class editPanel(tk.Toplevel):
-    def __init__(self):
+    def __init__(self, databaseContent, num):
         super().__init__()
 
         self.title("Edit panel")
@@ -71,12 +71,15 @@ class editPanel(tk.Toplevel):
 
         descLabel = tk.Label(self, text="Description")
         descEntry = tk.Entry(self, width=31, bg="gray")
+        descEntry.insert(0, databaseContent[num][0])
 
         accLabel = tk.Label(self, text="Account Name")
         accEntry = tk.Entry(self, width=31, bg="gray")
+        accEntry.insert(0, databaseContent[num][1])
 
         passLabel = tk.Label(self, text="Account Password")
         passEntry = tk.Entry(self, width=31, bg="gray")
+        passEntry.insert(0, databaseContent[num][2].rstrip())
 
         descLabel.grid(row=0, column=0)
         descEntry.grid(row=0, column=1)

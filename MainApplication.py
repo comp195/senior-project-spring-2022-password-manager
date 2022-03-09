@@ -47,7 +47,7 @@ class mainPanel(tk.Tk):
     def open_file(self):
         self.filename = tk.filedialog.askopenfilename(initialdir = ".", title="Select the File to Open", filetypes=(("All Files", "*"), ("Database Files", ".xyz"), ))
         self.databaseContents = openFile(self.filename)
-        print(self.databaseContents)
+        #print(self.databaseContents)
         self.create_database_panel()
 
     def save_file(self):
@@ -69,28 +69,34 @@ class editPanel(tk.Toplevel):
         self.title("Edit panel")
         self.geometry("300x90")
 
-        descLabel = tk.Label(self, text="Description")
-        descEntry = tk.Entry(self, width=31, bg="gray")
-        descEntry.insert(0, databaseContent[num][0])
+        self.targetDatabaseContent = databaseContent[num]  # Each edit panel only stores the info necessary for its own use
+        self.descLabel = tk.Label(self, text="Description")
+        self.descEntry = tk.Entry(self, width=31, bg="gray")
+        self.descEntry.insert(0, "**********")
 
-        accLabel = tk.Label(self, text="Account Name")
-        accEntry = tk.Entry(self, width=31, bg="gray")
-        accEntry.insert(0, databaseContent[num][1])
+        self.accLabel = tk.Label(self, text="Account Name")
+        self.accEntry = tk.Entry(self, width=31, bg="gray")
+        self.accEntry.insert(0, "**********")
 
-        passLabel = tk.Label(self, text="Account Password")
-        passEntry = tk.Entry(self, width=31, bg="gray")
-        passEntry.insert(0, databaseContent[num][2].rstrip())
+        self.passLabel = tk.Label(self, text="Account Password")
+        self.passEntry = tk.Entry(self, width=31, bg="gray")
+        self.passEntry.insert(0, "**********")
 
-        descLabel.grid(row=0, column=0)
-        descEntry.grid(row=0, column=1)
-        accLabel.grid(row=1, column=0)
-        accEntry.grid(row=1, column=1)
-        passLabel.grid(row=2, column=0)
-        passEntry.grid(row=2, column=1)
+
+        self.descLabel.grid(row=0, column=0)
+        self.descEntry.grid(row=0, column=1)
+        self.accLabel.grid(row=1, column=0)
+        self.accEntry.grid(row=1, column=1)
+        self.passLabel.grid(row=2, column=0)
+        self.passEntry.grid(row=2, column=1)
+
+        self.unhideText = tk.IntVar()
+        self.censorCheckbox = tk.Checkbutton(self, text='Unhide Text', variable=self.unhideText, onvalue=1, offvalue=0, command=self.toggle_text)
+        self.censorCheckbox.grid(row=3, column=1)
 
         self.button = tk.Button(self, text="Close Edit Panel")
         self.button['command'] = self.close_edit_panel
-        self.button.grid(row=3, column=1, sticky='w')
+        self.button.grid(row=3, column=0, sticky='w')
 
         self.resizable(False, False)
 
@@ -99,6 +105,22 @@ class editPanel(tk.Toplevel):
 
     def save_details(self):
         print("not implemented yet")
+
+    def toggle_text(self):
+        if self.unhideText.get() == 0:
+            self.descEntry.delete(0, "end")
+            self.descEntry.insert(0, "**********")
+            self.accEntry.delete(0, "end")
+            self.accEntry.insert(0, "**********")
+            self.passEntry.delete(0, "end")
+            self.passEntry.insert(0, "**********")
+        if self.unhideText.get() == 1:
+            self.descEntry.delete(0, "end")
+            self.descEntry.insert(0, self.targetDatabaseContent[0])
+            self.accEntry.delete(0, "end")
+            self.accEntry.insert(0, self.targetDatabaseContent[1])
+            self.passEntry.delete(0, "end")
+            self.passEntry.insert(0, self.targetDatabaseContent[2].rstrip())
 
 if __name__ == "__main__":
     app = mainPanel()

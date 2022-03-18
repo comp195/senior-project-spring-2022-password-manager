@@ -15,7 +15,7 @@ class mainPanel(tk.Tk):
         self.databaseContents = None
         self.accountInfo = []
         self.title("SecuriSimplex Password Manager")
-        self.geometry("700x700")
+        self.geometry("800x700")
 
         self.label = tk.Label(self, text = "This is the placeholder Main Panel")
         self.label.pack()
@@ -34,12 +34,27 @@ class mainPanel(tk.Tk):
 
         self.button = tk.Button(self.EditSaveFrame, text="Save A File", relief="groove")     #Button for Saving a File
         self.button['command'] = self.save_file
-        self.button.pack(side=tk.RIGHT, fill="both", expand=True, padx="0")
+        self.button.pack(side="right", fill="both", expand=True, padx="0")
 
-        self.dataFrame = tk.Frame(self, bg="gray", height="500", relief="ridge", pady="5")  # Creating frame for data entries
-        self.dataFrame.pack(fill="x", padx="5")  # Fill entire x axis
-        self.dataFrame.pack_propagate(0)  # Force the width and height
+        self.dataFrameContainer = tk.Frame(self, bg="gray", relief="ridge")
+        self.dataFrameContainer.pack(expand=1, fill="both", padx="5")  # Fill entire x axis
+        self.dataFrameContainer.pack_propagate(0)  # Force the width and height
 
+        self.dataFrameCanvas = tk.Canvas(self.dataFrameContainer, bg="gray")
+        self.dataFrameScrollbar = tk.Scrollbar(self, orient="vertical", command=self.dataFrameCanvas.yview)
+
+        self.dataFrame = tk.Frame(self.dataFrameCanvas, bg="gray", relief="ridge")  # Creating frame for data entries
+        #self.dataFrame.pack(expand=1, fill="both", padx="5", pady="5")  # Fill entire x axis
+        #self.dataFrame.pack_propagate(0)  # Force the width and height
+
+        self.dataFrameScrollbar = tk.Scrollbar(self.dataFrameContainer, orient="vertical", command=self.dataFrameCanvas.yview)
+
+        self.dataFrameCanvas.update_idletasks()
+        self.dataFrameCanvas.configure(scrollregion=self.dataFrame.bbox("all"), yscrollcommand=self.dataFrameScrollbar.set)
+
+        self.dataFrameCanvas.pack(fill="both", expand=True, side="left", padx="2", pady="2")
+        self.dataFrameCanvas.create_window(0, 5, anchor="center", window=self.dataFrame, tags="dataFrame")
+        self.dataFrameScrollbar.pack(fill="y", side="right")
 
     def open_edit_panel(self, num):
         self.editPanel = editPanel(self.databaseContents, num)
@@ -56,10 +71,16 @@ class mainPanel(tk.Tk):
     def create_database_panel(self):
         if self.databaseContents is not None:
             for num in range(0, len(self.databaseContents)):
-                self.accountInfo.append(tk.Button(self.dataFrame, bg="white", text=self.databaseContents[num][0], height="5", relief="ridge", pady="5", command=lambda a=num: self.open_edit_panel(a)))  # Creating frame for data entries
-            for num in range(0, len(self.accountInfo)):
-                self.accountInfo[num].pack(fill="x", expand=False, padx="5")  # Fill entire x axis
-                self.accountInfo[num].pack_propagate(0)  # Force the width and height
+                newButton = tk.Button(self.dataFrame, bg="white", text=self.databaseContents[num][0], height="5", relief="ridge", command=lambda a=num: self.open_edit_panel(a))
+                newButton.pack(fill="x", expand=True)
+                self.accountInfo.append(newButton)  # Creating frame for data entries
+            #for num in range(0, len(self.accountInfo)):
+            #    self.accountInfo[num].pack(fill="x", expand=False, padx="5")  # Fill entire x axis
+            #    self.accountInfo[num].pack_propagate(0)  # Force the width and height
+        self.dataFrameCanvas.itemconfigure("dataFrame", width=self.winfo_width())
+
+        self.dataFrameCanvas.update_idletasks()
+        self.dataFrameCanvas.config(scrollregion=self.dataFrameCanvas.bbox("all"))
 
 
 class editPanel(tk.Toplevel):
@@ -70,6 +91,7 @@ class editPanel(tk.Toplevel):
         self.geometry("300x90")
 
         self.targetDatabaseContent = databaseContent[num]  # Each edit panel only stores the info necessary for its own use
+
         self.descLabel = tk.Label(self, text="Description")
         self.descEntry = tk.Entry(self, width=31, bg="gray")
         self.descEntry.insert(0, "**********")
@@ -81,7 +103,6 @@ class editPanel(tk.Toplevel):
         self.passLabel = tk.Label(self, text="Account Password")
         self.passEntry = tk.Entry(self, width=31, bg="gray")
         self.passEntry.insert(0, "**********")
-
 
         self.descLabel.grid(row=0, column=0)
         self.descEntry.grid(row=0, column=1)
@@ -122,6 +143,12 @@ class editPanel(tk.Toplevel):
             self.passEntry.delete(0, "end")
             self.passEntry.insert(0, self.targetDatabaseContent[2].rstrip())
 
+
+    # Flag user for confirmation for closing application
+
+
+
 if __name__ == "__main__":
     app = mainPanel()
+    app.update()
     app.mainloop()

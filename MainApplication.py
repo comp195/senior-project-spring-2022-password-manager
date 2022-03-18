@@ -53,7 +53,7 @@ class mainPanel(tk.Tk):
         self.dataFrameCanvas.configure(scrollregion=self.dataFrame.bbox("all"), yscrollcommand=self.dataFrameScrollbar.set)
 
         self.dataFrameCanvas.pack(fill="both", expand=True, side="left", padx="2", pady="2")
-        self.dataFrameCanvas.create_window(0, 5, anchor="center", window=self.dataFrame, tags="dataFrame")
+        self.dataFrameCanvas.create_window(30, 0, anchor="center", window=self.dataFrame, tags="dataFrame")
         self.dataFrameScrollbar.pack(fill="y", side="right")
 
     def open_edit_panel(self, num):
@@ -77,7 +77,7 @@ class mainPanel(tk.Tk):
             #for num in range(0, len(self.accountInfo)):
             #    self.accountInfo[num].pack(fill="x", expand=False, padx="5")  # Fill entire x axis
             #    self.accountInfo[num].pack_propagate(0)  # Force the width and height
-        self.dataFrameCanvas.itemconfigure("dataFrame", width=self.winfo_width())
+        self.dataFrameCanvas.itemconfigure("dataFrame", width=self.winfo_width() - 35, anchor="center")
 
         self.dataFrameCanvas.update_idletasks()
         self.dataFrameCanvas.config(scrollregion=self.dataFrameCanvas.bbox("all"))

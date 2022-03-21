@@ -147,11 +147,7 @@ class editPanel(tk.Toplevel):
         parentWindow.databaseContents[num][0] = self.descEntry.get()
         parentWindow.databaseContents[num][1] = self.accEntry.get()
         parentWindow.databaseContents[num][2] = self.passEntry.get()
-        #print(parentWindow.databaseContents)
         self.destroy()
-
-    def save_details(self):
-        print("not implemented yet")
 
     def toggle_text(self):
         if self.unhideText.get() == 0:
@@ -170,7 +166,7 @@ class editPanel(tk.Toplevel):
             self.passEntry.insert(0, self.targetDatabaseContent[2].rstrip())
 
 
-    # Flag user for confirmation for closing application
+    # Note: Eventually flag user for confirmation for closing application
 
 
 

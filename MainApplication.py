@@ -17,13 +17,9 @@ class mainPanel(tk.Tk):
         self.title("SecuriSimplex Password Manager")
         self.geometry("800x700")
 
-        self.label = tk.Label(self, text = "This is the placeholder Main Panel")
-        self.label.pack()
-        """
-        self.button = tk.Button(self, text="Open Edit Panel", relief="groove")   #Open Edit Panel (Placeholder)
-        self.button['command'] = self.open_edit_panel
-        self.button.pack()
-        """
+        #self.label = tk.Label(self, text = "This is the placeholder Main Panel")
+        #self.label.pack()
+
         self.EditSaveFrame = tk.Frame(self, height="100", relief="ridge", pady="5")  #Creating frame for open file and save file widgets
         self.EditSaveFrame.pack(fill="x", padx="5") #Fill entire x axis
         self.EditSaveFrame.pack_propagate(0) #Force the width and height
@@ -56,6 +52,8 @@ class mainPanel(tk.Tk):
         self.dataFrameCanvas.create_window(30, 0, anchor="center", window=self.dataFrame, tags="dataFrame")
         self.dataFrameScrollbar.pack(fill="y", side="right")
 
+        self.resizable(False, False) # May remove later
+
     def open_edit_panel(self, num):
         self.editPanel = editPanel(self.databaseContents, num)
 
@@ -77,8 +75,8 @@ class mainPanel(tk.Tk):
             #for num in range(0, len(self.accountInfo)):
             #    self.accountInfo[num].pack(fill="x", expand=False, padx="5")  # Fill entire x axis
             #    self.accountInfo[num].pack_propagate(0)  # Force the width and height
-        self.dataFrameCanvas.itemconfigure("dataFrame", width=self.winfo_width() - 35, anchor="center")
 
+        self.dataFrameCanvas.itemconfigure("dataFrame", width=self.winfo_width() - 35, anchor="center")
         self.dataFrameCanvas.update_idletasks()
         self.dataFrameCanvas.config(scrollregion=self.dataFrameCanvas.bbox("all"))
 

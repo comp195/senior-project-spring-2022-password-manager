@@ -16,7 +16,7 @@ Project is planned to use the following libraries:
   - Pycrypto
 
 # Current User Interface Design
-- Main Panel
+### Main Panel
 ![image](https://user-images.githubusercontent.com/48334359/159215764-53145b99-c547-406a-a048-905a646086c0.png)
-- Edit Panel
-- ![image](https://user-images.githubusercontent.com/48334359/159215882-9e61a5d8-da01-486d-b615-8739d92b41de.png)
+### Edit Panel
+![image](https://user-images.githubusercontent.com/48334359/159215882-9e61a5d8-da01-486d-b615-8739d92b41de.png)

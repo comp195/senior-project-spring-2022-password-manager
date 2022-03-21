@@ -6,11 +6,14 @@ def openFile(file_name):
     file_contents = []
     for line in file:
         file_contents.append(line.split(' '))
+    file.close()
     return file_contents
 
 class mainPanel(tk.Tk):
     def __init__(self):
         super().__init__()
+
+# ------------------------------- Program Info ------------------------------- #
 
         self.databaseContents = None
         self.accountInfo = []
@@ -19,6 +22,10 @@ class mainPanel(tk.Tk):
 
         #self.label = tk.Label(self, text = "This is the placeholder Main Panel")
         #self.label.pack()
+
+# ------------------------------- Program Info ------------------------------- #
+
+# ------------------------------- Creating Save and Edit Buttons ------------------------------- #
 
         self.EditSaveFrame = tk.Frame(self, height="100", relief="ridge", pady="5")  #Creating frame for open file and save file widgets
         self.EditSaveFrame.pack(fill="x", padx="5") #Fill entire x axis
@@ -31,6 +38,10 @@ class mainPanel(tk.Tk):
         self.button = tk.Button(self.EditSaveFrame, text="Save A File", relief="groove")     #Button for Saving a File
         self.button['command'] = self.save_file
         self.button.pack(side="right", fill="both", expand=True, padx="0")
+
+# ------------------------------- Creating Save and Edit Buttons ------------------------------- #
+
+# ------------------------------- Creating Data Buttons ------------------------------- #
 
         self.dataFrameContainer = tk.Frame(self, bg="gray", relief="ridge")
         self.dataFrameContainer.pack(expand=1, fill="both", padx="5")  # Fill entire x axis
@@ -52,7 +63,9 @@ class mainPanel(tk.Tk):
         self.dataFrameCanvas.create_window(30, 0, anchor="center", window=self.dataFrame, tags="dataFrame")
         self.dataFrameScrollbar.pack(fill="y", side="right")
 
-        self.resizable(False, False) # May remove later
+# ------------------------------- Creating Data Buttons ------------------------------- #
+
+        self.resizable(False, False)  # Prevents resizing the window, may remove later
 
     def open_edit_panel(self, num):
         self.editPanel = editPanel(self.databaseContents, num)
@@ -60,13 +73,22 @@ class mainPanel(tk.Tk):
     def open_file(self):
         self.filename = tk.filedialog.askopenfilename(initialdir = ".", title="Select the File to Open", filetypes=(("All Files", "*"), ("Database Files", ".xyz"), ))
         self.databaseContents = openFile(self.filename)
-        #print(self.databaseContents)
         self.create_database_panel()
 
     def save_file(self):
-        print("not functional yet")
+        try:
+            file = open(self.filename, 'w')
+            for line in self.databaseContents:
+                file.write(line[0] + " ")
+                file.write(line[1] + " ")
+                file.write(line[2].rstrip() + "\n")
+            self.create_database_panel()
+        except AttributeError:
+            print("Must Load File First")
 
     def create_database_panel(self):
+        for element in self.accountInfo:
+            element.destroy()
         if self.databaseContents is not None:
             for num in range(0, len(self.databaseContents)):
                 newButton = tk.Button(self.dataFrame, bg="white", text=self.databaseContents[num][0], height="5", relief="ridge", command=lambda a=num: self.open_edit_panel(a))
@@ -113,13 +135,19 @@ class editPanel(tk.Toplevel):
         self.censorCheckbox = tk.Checkbutton(self, text='Unhide Text', variable=self.unhideText, onvalue=1, offvalue=0, command=self.toggle_text)
         self.censorCheckbox.grid(row=3, column=1)
 
-        self.button = tk.Button(self, text="Close Edit Panel")
-        self.button['command'] = self.close_edit_panel
+        self.button = tk.Button(self, text="Save (Must Still Save a File)")
+        self.button['command'] = lambda a=num: self.close_edit_panel(a)
         self.button.grid(row=3, column=0, sticky='w')
 
         self.resizable(False, False)
 
-    def close_edit_panel(self):
+    def close_edit_panel(self, num):
+        parentName = self.winfo_parent()
+        parentWindow = self.nametowidget(parentName)
+        parentWindow.databaseContents[num][0] = self.descEntry.get()
+        parentWindow.databaseContents[num][1] = self.accEntry.get()
+        parentWindow.databaseContents[num][2] = self.passEntry.get()
+        #print(parentWindow.databaseContents)
         self.destroy()
 
     def save_details(self):

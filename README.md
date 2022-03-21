@@ -14,3 +14,6 @@ Project currently uses the following libraries:
   - TKinter
 Project is planned to use the following libraries:
   - Pycrypto
+
+# Current User Interface Design
+![image](https://user-images.githubusercontent.com/48334359/159215764-53145b99-c547-406a-a048-905a646086c0.png)

@@ -1,5 +1,6 @@
 import tkinter.filedialog
 import tkinter as tk
+import cryptography
 
 def openFile(file_name):
     file = open(file_name,'r')
@@ -19,6 +20,7 @@ class mainPanel(tk.Tk):
         self.accountInfo = []
         self.title("SecuriSimplex Password Manager")
         self.geometry("800x700")
+        self.filename = ""
 
         #self.label = tk.Label(self, text = "This is the placeholder Main Panel")
         #self.label.pack()
@@ -31,15 +33,26 @@ class mainPanel(tk.Tk):
         self.EditSaveFrame.pack(fill="x", padx="5") #Fill entire x axis
         self.EditSaveFrame.pack_propagate(0) #Force the width and height
 
+        self.button = tk.Button(self.EditSaveFrame, text="Create A File", relief="groove")  # Button for Creating a File
+        self.button['command'] = self.create_file
+        self.button.pack(side="left", fill="both", expand=True, padx="0")
+
         self.button = tk.Button(self.EditSaveFrame, text = "Open A File", relief="groove")   #Button for Opening a File
         self.button['command'] = self.open_file
-        self.button.pack(side=tk.LEFT, fill="both", expand=True, padx="0")
+        self.button.pack(side="left", fill="both", expand=True, padx="0")
 
         self.button = tk.Button(self.EditSaveFrame, text="Save A File", relief="groove")     #Button for Saving a File
         self.button['command'] = self.save_file
-        self.button.pack(side="right", fill="both", expand=True, padx="0")
+        self.button.pack(side="left", fill="both", expand=True, padx="0")
 
-# ------------------------------- Creating Save and Edit Buttons ------------------------------- #
+        self.button = tk.Button(self.EditSaveFrame, text="Abort Changes", relief="groove")     #Button for Aborting Changes to a File
+        self.button['command'] = lambda a=self.filename: self.open_edit_panel(a)
+        self.button['state'] = "disabled"
+        self.button.pack(side="left", fill="both", expand=True, padx="0")
+
+# ------------------------------- Creating Top Bar Buttons ------------------------------- #
+
+
 
 # ------------------------------- Creating Data Buttons ------------------------------- #
 
@@ -72,6 +85,7 @@ class mainPanel(tk.Tk):
 
     def open_file(self):
         self.filename = tk.filedialog.askopenfilename(initialdir = ".", title="Select the File to Open", filetypes=(("All Files", "*"), ("Database Files", ".xyz"), ))
+        #self.keyfilename = tk.filedialog.askopenfilename(initialdir = ".", title="Select Key Used to Decrypt", filetypes = (("All Files", "*"), ("Keys", ".key"), ))
         self.databaseContents = openFile(self.filename)
         self.create_database_panel()
 
@@ -85,6 +99,9 @@ class mainPanel(tk.Tk):
             self.create_database_panel()
         except AttributeError:
             print("Must Load File First")
+
+    def create_file(self):
+        print("123123")
 
     def create_database_panel(self):
         for element in self.accountInfo:

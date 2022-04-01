@@ -20,35 +20,35 @@ class mainPanel(tk.Tk):
         self.accountInfo = []
         self.title("SecuriSimplex Password Manager")
         self.geometry("800x700")
-        self.filename = ""
+        self.pendingChanges = False
 
         #self.label = tk.Label(self, text = "This is the placeholder Main Panel")
         #self.label.pack()
 
 # ------------------------------- Program Info ------------------------------- #
 
-# ------------------------------- Creating Save and Edit Buttons ------------------------------- #
+# ------------------------------- Creating Top Bar Buttons ------------------------------- #
 
         self.EditSaveFrame = tk.Frame(self, height="100", relief="ridge", pady="5")  #Creating frame for open file and save file widgets
         self.EditSaveFrame.pack(fill="x", padx="5") #Fill entire x axis
         self.EditSaveFrame.pack_propagate(0) #Force the width and height
 
-        self.button = tk.Button(self.EditSaveFrame, text="Create A File", relief="groove")  # Button for Creating a File
-        self.button['command'] = self.create_file
-        self.button.pack(side="left", fill="both", expand=True, padx="0")
+        self.createButton = tk.Button(self.EditSaveFrame, text="Create A File", relief="groove")  # Button for Creating a File
+        self.createButton['command'] = self.create_file
+        self.createButton.pack(side="left", fill="both", expand=True, padx="0")
 
-        self.button = tk.Button(self.EditSaveFrame, text = "Open A File", relief="groove")   #Button for Opening a File
-        self.button['command'] = self.open_file
-        self.button.pack(side="left", fill="both", expand=True, padx="0")
+        self.openButton = tk.Button(self.EditSaveFrame, text = "Open A File", relief="groove")   #Button for Opening a File
+        self.openButton['command'] = self.open_file
+        self.openButton.pack(side="left", fill="both", expand=True, padx="0")
 
-        self.button = tk.Button(self.EditSaveFrame, text="Save A File", relief="groove")     #Button for Saving a File
-        self.button['command'] = self.save_file
-        self.button.pack(side="left", fill="both", expand=True, padx="0")
+        self.saveButton = tk.Button(self.EditSaveFrame, text="Save A File", relief="groove")     #Button for Saving a File
+        self.saveButton['command'] = self.save_file
+        self.saveButton.pack(side="left", fill="both", expand=True, padx="0")
 
-        self.button = tk.Button(self.EditSaveFrame, text="Abort Changes", relief="groove")     #Button for Aborting Changes to a File
-        self.button['command'] = lambda a=self.filename: self.open_edit_panel(a)
-        self.button['state'] = "disabled"
-        self.button.pack(side="left", fill="both", expand=True, padx="0")
+        self.abortButton = tk.Button(self.EditSaveFrame, text="Abort Changes", relief="groove")     #Button for Aborting Changes to a File
+        self.abortButton['command'] = self.reopen_file
+        self.abortButton['state'] = "disabled"
+        self.abortButton.pack(side="left", fill="both", expand=True, padx="0")
 
 # ------------------------------- Creating Top Bar Buttons ------------------------------- #
 
@@ -89,6 +89,11 @@ class mainPanel(tk.Tk):
         self.databaseContents = openFile(self.filename)
         self.create_database_panel()
 
+    def reopen_file(self):
+        self.databaseContents = openFile(self.filename)
+        self.create_database_panel()
+        self.abortButton['state'] = "disabled"
+
     def save_file(self):
         try:
             file = open(self.filename, 'w')
@@ -96,7 +101,7 @@ class mainPanel(tk.Tk):
                 file.write(line[0] + " ")
                 file.write(line[1] + " ")
                 file.write(line[2].rstrip() + "\n")
-            self.create_database_panel()
+            #self.create_database_panel()
         except AttributeError:
             print("Must Load File First")
 
@@ -152,7 +157,7 @@ class editPanel(tk.Toplevel):
         self.censorCheckbox = tk.Checkbutton(self, text='Unhide Text', variable=self.unhideText, onvalue=1, offvalue=0, command=self.toggle_text)
         self.censorCheckbox.grid(row=3, column=1)
 
-        self.button = tk.Button(self, text="Save (Must Still Save a File)")
+        self.button = tk.Button(self, text="Close")
         self.button['command'] = lambda a=num: self.close_edit_panel(a)
         self.button.grid(row=3, column=0, sticky='w')
 
@@ -161,9 +166,27 @@ class editPanel(tk.Toplevel):
     def close_edit_panel(self, num):
         parentName = self.winfo_parent()
         parentWindow = self.nametowidget(parentName)
-        parentWindow.databaseContents[num][0] = self.descEntry.get()
-        parentWindow.databaseContents[num][1] = self.accEntry.get()
-        parentWindow.databaseContents[num][2] = self.passEntry.get()
+
+        if self.unhideText.get() == 1:
+            if parentWindow.databaseContents[num][0] != self.descEntry.get() or parentWindow.databaseContents[num][1] != self.accEntry.get() or parentWindow.databaseContents[num][2].rstrip() != self.passEntry.get():
+                parentWindow.pendingChanges = True
+            parentWindow.databaseContents[num][0] = self.descEntry.get()
+            parentWindow.databaseContents[num][1] = self.accEntry.get()
+            parentWindow.databaseContents[num][2] = self.passEntry.get()
+            parentWindow.create_database_panel()
+
+        elif self.unhideText == 0:
+            self.unhideText.set(1)
+            self.toggle_text()
+            if parentWindow.databaseContents[num][0] != self.descEntry.get() or parentWindow.databaseContents[num][1] != self.accEntry.get() or parentWindow.databaseContents[num][2].rstrip() != self.passEntry.get():
+                parentWindow.pendingChanges = True
+            parentWindow.databaseContents[num][0] = self.descEntry.get()
+            parentWindow.databaseContents[num][1] = self.accEntry.get()
+            parentWindow.databaseContents[num][2] = self.passEntry.get()
+            parentWindow.create_database_panel()
+
+        if parentWindow.pendingChanges == True:
+            parentWindow.abortButton['state'] = "active"
         self.destroy()
 
     def toggle_text(self):

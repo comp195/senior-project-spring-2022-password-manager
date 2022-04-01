@@ -102,6 +102,8 @@ class mainPanel(tk.Tk):
                 file.write(line[1] + " ")
                 file.write(line[2].rstrip() + "\n")
             #self.create_database_panel()
+            self.pendingChanges = False
+            self.abortButton['state'] = "disabled"
         except AttributeError:
             print("Must Load File First")
 
@@ -137,14 +139,17 @@ class editPanel(tk.Toplevel):
         self.descLabel = tk.Label(self, text="Description")
         self.descEntry = tk.Entry(self, width=31, bg="gray")
         self.descEntry.insert(0, "**********")
+        self.descEntry['state'] = 'disabled'
 
         self.accLabel = tk.Label(self, text="Account Name")
         self.accEntry = tk.Entry(self, width=31, bg="gray")
         self.accEntry.insert(0, "**********")
+        self.accEntry['state'] = 'disabled'
 
         self.passLabel = tk.Label(self, text="Account Password")
         self.passEntry = tk.Entry(self, width=31, bg="gray")
         self.passEntry.insert(0, "**********")
+        self.passEntry['state'] = 'disabled'
 
         self.descLabel.grid(row=0, column=0)
         self.descEntry.grid(row=0, column=1)
@@ -193,15 +198,26 @@ class editPanel(tk.Toplevel):
         if self.unhideText.get() == 0:
             self.descEntry.delete(0, "end")
             self.descEntry.insert(0, "**********")
+            self.descEntry['state'] = 'disabled'
+
             self.accEntry.delete(0, "end")
             self.accEntry.insert(0, "**********")
+            self.accEntry['state'] = 'disabled'
+
             self.passEntry.delete(0, "end")
             self.passEntry.insert(0, "**********")
+            self.passEntry['state'] = 'disabled'
+
         if self.unhideText.get() == 1:
+            self.descEntry['state'] = 'normal'
             self.descEntry.delete(0, "end")
             self.descEntry.insert(0, self.targetDatabaseContent[0])
+
+            self.accEntry['state'] = 'normal'
             self.accEntry.delete(0, "end")
             self.accEntry.insert(0, self.targetDatabaseContent[1])
+
+            self.passEntry['state'] = 'normal'
             self.passEntry.delete(0, "end")
             self.passEntry.insert(0, self.targetDatabaseContent[2].rstrip())
 

@@ -43,6 +43,7 @@ class mainPanel(tk.Tk):
 
         self.saveButton = tk.Button(self.EditSaveFrame, text="Save A File", relief="groove")     #Button for Saving a File
         self.saveButton['command'] = self.save_file
+        self.saveButton['state'] = 'disabled'
         self.saveButton.pack(side="left", fill="both", expand=True, padx="0")
 
         self.abortButton = tk.Button(self.EditSaveFrame, text="Abort Changes", relief="groove")     #Button for Aborting Changes to a File
@@ -96,6 +97,7 @@ class mainPanel(tk.Tk):
         self.databaseContents = openFile(self.filename)
         self.create_database_panel()
         self.addEntryButton['state'] = 'active'
+        self.saveButton['state'] = 'active'
 
     def reopen_file(self):
         self.databaseContents = openFile(self.filename)
@@ -129,6 +131,7 @@ class mainPanel(tk.Tk):
         self.databaseContents = [["", "", ""]]
         self.create_database_panel()
         self.addEntryButton['state'] = 'active'
+        self.saveButton['state'] = 'active'
 
     def add_database_entry(self):
         self.databaseContents.append(["", "", ""])

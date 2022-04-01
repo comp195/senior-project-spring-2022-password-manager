@@ -19,7 +19,7 @@ class mainPanel(tk.Tk):
         self.databaseContents = None
         self.accountInfo = []
         self.title("SecuriSimplex Password Manager")
-        self.geometry("800x700")
+        self.geometry("800x900")
         self.pendingChanges = False
 
         #self.label = tk.Label(self, text = "This is the placeholder Main Panel")
@@ -52,7 +52,14 @@ class mainPanel(tk.Tk):
 
 # ------------------------------- Creating Top Bar Buttons ------------------------------- #
 
+# -------------------------------- Creating Add New Entry -------------------------------- #
 
+        self.addEntryButton = tk.Button(self, text="Add New Entry", height = 6, relief="groove")  # Button for Adding New Entry to a File
+        self.addEntryButton['command'] = self.add_database_entry
+        #self.addEntryButton['state'] = "disabled"
+        self.addEntryButton.pack(side="top", fill="x", padx="0")
+
+# -------------------------------- Creating Add New Entry -------------------------------- #
 
 # ------------------------------- Creating Data Buttons ------------------------------- #
 
@@ -108,7 +115,12 @@ class mainPanel(tk.Tk):
             print("Must Load File First")
 
     def create_file(self):
-        print("123123")
+        self.databaseContents = [["", "", ""]]
+        self.create_database_panel()
+
+    def add_database_entry(self):
+        self.databaseContents.append(["", "", ""])
+        self.create_database_panel()
 
     def create_database_panel(self):
         for element in self.accountInfo:

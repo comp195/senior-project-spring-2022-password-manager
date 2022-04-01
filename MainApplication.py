@@ -21,7 +21,7 @@ class mainPanel(tk.Tk):
         self.title("SecuriSimplex Password Manager")
         self.geometry("800x900")
         self.pendingChanges = False
-
+        #self.newFile = False
         #self.label = tk.Label(self, text = "This is the placeholder Main Panel")
         #self.label.pack()
 
@@ -56,7 +56,7 @@ class mainPanel(tk.Tk):
 
         self.addEntryButton = tk.Button(self, text="Add New Entry", height = 6, relief="groove")  # Button for Adding New Entry to a File
         self.addEntryButton['command'] = self.add_database_entry
-        #self.addEntryButton['state'] = "disabled"
+        self.addEntryButton['state'] = "disabled"
         self.addEntryButton.pack(side="top", fill="x", padx="0")
 
 # -------------------------------- Creating Add New Entry -------------------------------- #
@@ -95,6 +95,7 @@ class mainPanel(tk.Tk):
         #self.keyfilename = tk.filedialog.askopenfilename(initialdir = ".", title="Select Key Used to Decrypt", filetypes = (("All Files", "*"), ("Keys", ".key"), ))
         self.databaseContents = openFile(self.filename)
         self.create_database_panel()
+        self.addEntryButton['state'] = 'active'
 
     def reopen_file(self):
         self.databaseContents = openFile(self.filename)
@@ -113,10 +114,21 @@ class mainPanel(tk.Tk):
             self.abortButton['state'] = "disabled"
         except AttributeError:
             print("Must Load File First")
+            self.filename = tk.filedialog.asksaveasfilename(initialdir = ".", title="Select the File to Open", filetypes=(("Database Files", ".xyz"), ))
+            file = open(self.filename, 'w')
+            for line in self.databaseContents:
+                file.write(line[0] + " ")
+                file.write(line[1] + " ")
+                file.write(line[2].rstrip() + "\n")
+            #self.create_database_panel()
+            self.pendingChanges = False
+            self.abortButton['state'] = "disabled"
+
 
     def create_file(self):
         self.databaseContents = [["", "", ""]]
         self.create_database_panel()
+        self.addEntryButton['state'] = 'active'
 
     def add_database_entry(self):
         self.databaseContents.append(["", "", ""])

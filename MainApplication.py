@@ -94,15 +94,21 @@ class mainPanel(tk.Tk):
     def open_file(self):
         self.filename = tk.filedialog.askopenfilename(initialdir = ".", title="Select the File to Open", filetypes=(("All Files", "*"), ("Database Files", ".xyz"), ))
         #self.keyfilename = tk.filedialog.askopenfilename(initialdir = ".", title="Select Key Used to Decrypt", filetypes = (("All Files", "*"), ("Keys", ".key"), ))
-        self.databaseContents = openFile(self.filename)
-        self.create_database_panel()
-        self.addEntryButton['state'] = 'active'
-        self.saveButton['state'] = 'active'
+        if self.filename is not None and self.filename != "":
+            self.databaseContents = openFile(self.filename)
+            self.create_database_panel()
+            self.addEntryButton['state'] = 'active'
+            self.saveButton['state'] = 'active'
+            self.title("SecuriSimplex Password Manager - " + self.filename.split("/")[len(self.filename.split("/")) - 1])
 
     def reopen_file(self):
-        self.databaseContents = openFile(self.filename)
-        self.create_database_panel()
-        self.abortButton['state'] = "disabled"
+        try:
+            self.databaseContents = openFile(self.filename)
+            self.create_database_panel()
+            self.abortButton['state'] = "disabled"
+        except AttributeError:
+            self.databaseContents = [["", "", ""]]
+            self.create_database_panel()
 
     def save_file(self):
         try:
@@ -111,20 +117,21 @@ class mainPanel(tk.Tk):
                 file.write(line[0] + " ")
                 file.write(line[1] + " ")
                 file.write(line[2].rstrip() + "\n")
-            #self.create_database_panel()
+            self.create_database_panel()
             self.pendingChanges = False
             self.abortButton['state'] = "disabled"
         except AttributeError:
-            print("Must Load File First")
+            #print("Must Load File First")
             self.filename = tk.filedialog.asksaveasfilename(initialdir = ".", title="Select the File to Open", filetypes=(("Database Files", ".xyz"), ))
             file = open(self.filename, 'w')
             for line in self.databaseContents:
                 file.write(line[0] + " ")
                 file.write(line[1] + " ")
                 file.write(line[2].rstrip() + "\n")
-            #self.create_database_panel()
+            self.create_database_panel()
             self.pendingChanges = False
             self.abortButton['state'] = "disabled"
+            self.title("SecuriSimplex Password Manager - " + self.filename.split("/")[len(self.filename.split("/")) - 1])
 
 
     def create_file(self):
@@ -143,13 +150,9 @@ class mainPanel(tk.Tk):
         if self.databaseContents is not None:
             for num in range(0, len(self.databaseContents)):
                 newButton = tk.Button(self.dataFrame, bg="white", text=self.databaseContents[num][0], height="5", relief="ridge", command=lambda a=num: self.open_edit_panel(a))
-                newButton.pack(fill="x", expand=True)
+                newButton.pack(side = "top", fill="x", expand=True)
                 self.accountInfo.append(newButton)  # Creating frame for data entries
-            #for num in range(0, len(self.accountInfo)):
-            #    self.accountInfo[num].pack(fill="x", expand=False, padx="5")  # Fill entire x axis
-            #    self.accountInfo[num].pack_propagate(0)  # Force the width and height
-
-        self.dataFrameCanvas.itemconfigure("dataFrame", width=self.winfo_width() - 35, anchor="center")
+        self.dataFrameCanvas.itemconfigure("dataFrame", width=self.winfo_width() - 35, anchor="n")
         self.dataFrameCanvas.update_idletasks()
         self.dataFrameCanvas.config(scrollregion=self.dataFrameCanvas.bbox("all"))
 
@@ -159,39 +162,46 @@ class editPanel(tk.Toplevel):
         super().__init__()
 
         self.title("Edit panel")
-        self.geometry("300x90")
+        self.geometry("300x110")
 
         self.targetDatabaseContent = databaseContent[num]  # Each edit panel only stores the info necessary for its own use
 
         self.descLabel = tk.Label(self, text="Description")
-        self.descEntry = tk.Entry(self, width=31, bg="gray")
+        self.descEntry = tk.Entry(self, width=25, bg="gray")
         self.descEntry.insert(0, "**********")
         self.descEntry['state'] = 'disabled'
 
         self.accLabel = tk.Label(self, text="Account Name")
-        self.accEntry = tk.Entry(self, width=31, bg="gray")
+        self.accEntry = tk.Entry(self, width=25, bg="gray")
         self.accEntry.insert(0, "**********")
         self.accEntry['state'] = 'disabled'
 
         self.passLabel = tk.Label(self, text="Account Password")
-        self.passEntry = tk.Entry(self, width=31, bg="gray")
+        self.passEntry = tk.Entry(self, width=25, bg="gray")
         self.passEntry.insert(0, "**********")
         self.passEntry['state'] = 'disabled'
 
+        self.copyButton1 = tk.Button(self, bg="white", text="Copy", relief="ridge", command=lambda a=0: self.copy_to_clipboard(a))
+        self.copyButton2 = tk.Button(self, bg="white", text="Copy", relief="ridge", command=lambda a=1: self.copy_to_clipboard(a))
+        self.copyButton3 = tk.Button(self, bg="white", height="1", text="Copy", relief="ridge", command=lambda a=2: self.copy_to_clipboard(a))
+
         self.descLabel.grid(row=0, column=0)
         self.descEntry.grid(row=0, column=1)
+        self.copyButton1.grid(row=0, column=2)
         self.accLabel.grid(row=1, column=0)
         self.accEntry.grid(row=1, column=1)
+        self.copyButton2.grid(row=1, column=2)
         self.passLabel.grid(row=2, column=0)
         self.passEntry.grid(row=2, column=1)
+        self.copyButton3.grid(row=2, column=2)
 
         self.unhideText = tk.IntVar()
         self.censorCheckbox = tk.Checkbutton(self, text='Unhide Text', variable=self.unhideText, onvalue=1, offvalue=0, command=self.toggle_text)
-        self.censorCheckbox.grid(row=3, column=1)
+        self.censorCheckbox.grid(row=3, column=1, sticky='n')
 
-        self.button = tk.Button(self, text="Close")
+        self.button = tk.Button(self, text="Close", relief='ridge')
         self.button['command'] = lambda a=num: self.close_edit_panel(a)
-        self.button.grid(row=3, column=0, sticky='w')
+        self.button.grid(row=3, column=0, sticky='n')
 
         self.resizable(False, False)
 
@@ -220,6 +230,17 @@ class editPanel(tk.Toplevel):
         if parentWindow.pendingChanges == True:
             parentWindow.abortButton['state'] = "active"
         self.destroy()
+
+    def copy_to_clipboard(self, num):
+        if num==0:
+            self.clipboard_clear()
+            self.clipboard_append(self.targetDatabaseContent[0])
+        if num==1:
+            self.clipboard_clear()
+            self.clipboard_append(self.targetDatabaseContent[1])
+        if num==2:
+            self.clipboard_clear()
+            self.clipboard_append(self.targetDatabaseContent[2])
 
     def toggle_text(self):
         if self.unhideText.get() == 0:

@@ -1,12 +1,18 @@
 import tkinter.filedialog
 import tkinter as tk
-import cryptography
+from cryptography.fernet import Fernet
 
-def openFile(file_name):
-    file = open(file_name,'r')
+def openFile(file_name, key_file_name):
+    file = open(file_name, 'rb')
+    keyFile = open(key_file_name, 'rb')
+    key = keyFile.readline()
+    decryptor = Fernet(key)
     file_contents = []
+
     for line in file:
-        file_contents.append(line.split(' '))
+        contents = decryptor.decrypt(line.strip())
+        list_of_contents = contents.decode("utf-8").rstrip().split(' ')
+        file_contents.append(list_of_contents)
     file.close()
     return file_contents
 
@@ -21,9 +27,7 @@ class mainPanel(tk.Tk):
         self.title("SecuriSimplex Password Manager")
         self.geometry("800x900")
         self.pendingChanges = False
-        #self.newFile = False
-        #self.label = tk.Label(self, text = "This is the placeholder Main Panel")
-        #self.label.pack()
+        self.newFile = False
 
 # ------------------------------- Program Info ------------------------------- #
 
@@ -72,8 +76,6 @@ class mainPanel(tk.Tk):
         self.dataFrameScrollbar = tk.Scrollbar(self, orient="vertical", command=self.dataFrameCanvas.yview)
 
         self.dataFrame = tk.Frame(self.dataFrameCanvas, bg="gray", relief="ridge")  # Creating frame for data entries
-        #self.dataFrame.pack(expand=1, fill="both", padx="5", pady="5")  # Fill entire x axis
-        #self.dataFrame.pack_propagate(0)  # Force the width and height
 
         self.dataFrameScrollbar = tk.Scrollbar(self.dataFrameContainer, orient="vertical", command=self.dataFrameCanvas.yview)
 
@@ -93,9 +95,9 @@ class mainPanel(tk.Tk):
 
     def open_file(self):
         self.filename = tk.filedialog.askopenfilename(initialdir = ".", title="Select the File to Open", filetypes=(("All Files", "*"), ("Database Files", ".xyz"), ))
-        #self.keyfilename = tk.filedialog.askopenfilename(initialdir = ".", title="Select Key Used to Decrypt", filetypes = (("All Files", "*"), ("Keys", ".key"), ))
+        self.keyfilename = tk.filedialog.askopenfilename(initialdir = ".", title="Select Key Used to Decrypt", filetypes = (("All Files", "*"), ("Keys", ".key"), ))
         if self.filename is not None and self.filename != "":
-            self.databaseContents = openFile(self.filename)
+            self.databaseContents = openFile(self.filename, self.keyfilename)
             self.create_database_panel()
             self.addEntryButton['state'] = 'active'
             self.saveButton['state'] = 'active'
@@ -112,22 +114,44 @@ class mainPanel(tk.Tk):
 
     def save_file(self):
         try:
-            file = open(self.filename, 'w')
-            for line in self.databaseContents:
-                file.write(line[0] + " ")
-                file.write(line[1] + " ")
-                file.write(line[2].rstrip() + "\n")
+            file = open(self.filename, 'wb')
+
+            key = Fernet.generate_key()
+            encryptor = Fernet(key)
+            keyFile = open(self.filename + ".key", "wb")
+            keyFile.write(key)
+            keyFile.close()
+
+            length_of_database_contents = len(self.databaseContents)
+            num = 0
+            while num < length_of_database_contents:
+                stuff_to_write = encryptor.encrypt((self.databaseContents[num][0] + " " + self.databaseContents[num][1] + " " + self.databaseContents[num][2].rstrip() + "\n").encode())
+                file.write(stuff_to_write + b'\n')
+                num += 1
+            file.close()
             self.create_database_panel()
             self.pendingChanges = False
             self.abortButton['state'] = "disabled"
-        except AttributeError:
-            #print("Must Load File First")
+
+        except (AttributeError, FileNotFoundError) as error:
             self.filename = tk.filedialog.asksaveasfilename(initialdir = ".", title="Select the File to Open", filetypes=(("Database Files", ".xyz"), ))
-            file = open(self.filename, 'w')
-            for line in self.databaseContents:
-                file.write(line[0] + " ")
-                file.write(line[1] + " ")
-                file.write(line[2].rstrip() + "\n")
+            file = open(self.filename, 'wb')
+
+            key = Fernet.generate_key()
+            encryptor = Fernet(key)
+            keyFile = open(self.filename + ".key", "wb")
+            keyFile.write(key)
+            keyFile.close()
+
+            length_of_database_contents = len(self.databaseContents)
+            print(self.databaseContents)
+            print(length_of_database_contents)
+            num = 0
+            while num < length_of_database_contents:
+                stuff_to_write = encryptor.encrypt((self.databaseContents[num][0] + " " + self.databaseContents[num][1] + " " + self.databaseContents[num][2].rstrip() + "\n").encode())
+                file.write(stuff_to_write + b'\n')
+                num += 1
+            file.close()
             self.create_database_panel()
             self.pendingChanges = False
             self.abortButton['state'] = "disabled"
@@ -183,7 +207,7 @@ class editPanel(tk.Toplevel):
 
         self.copyButton1 = tk.Button(self, bg="white", text="Copy", relief="ridge", command=lambda a=0: self.copy_to_clipboard(a))
         self.copyButton2 = tk.Button(self, bg="white", text="Copy", relief="ridge", command=lambda a=1: self.copy_to_clipboard(a))
-        self.copyButton3 = tk.Button(self, bg="white", height="1", text="Copy", relief="ridge", command=lambda a=2: self.copy_to_clipboard(a))
+        self.copyButton3 = tk.Button(self, bg="white", text="Copy", relief="ridge", command=lambda a=2: self.copy_to_clipboard(a))
 
         self.descLabel.grid(row=0, column=0)
         self.descEntry.grid(row=0, column=1)

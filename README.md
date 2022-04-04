@@ -11,9 +11,13 @@ The application is primarily targetted at Windows and will be built using Python
 
 # Project Components
 Project currently uses the following libraries:
+
 TKinter
+
 Docs: https://docs.python.org/3/library/tkinter.html
+
 Cryptography
+
 Docs: https://cryptography.io/en/latest/
 
 # Current User Interface Design

@@ -27,7 +27,6 @@ class mainPanel(tk.Tk):
         self.title("SecuriSimplex Password Manager")
         self.geometry("800x900")
         self.pendingChanges = False
-        self.newFile = False
 
 # ------------------------------- Program Info ------------------------------- #
 
@@ -133,8 +132,10 @@ class mainPanel(tk.Tk):
             self.pendingChanges = False
             self.abortButton['state'] = "disabled"
 
-        except (AttributeError, FileNotFoundError) as error:
+        except (AttributeError, FileNotFoundError, TypeError) as error:
             self.filename = tk.filedialog.asksaveasfilename(initialdir = ".", title="Select the File to Open", filetypes=(("Database Files", ".xyz"), ))
+            if self.filename == "":
+                self.filename = "default"
             file = open(self.filename, 'wb')
 
             key = Fernet.generate_key()
@@ -144,12 +145,13 @@ class mainPanel(tk.Tk):
             keyFile.close()
 
             length_of_database_contents = len(self.databaseContents)
-            print(self.databaseContents)
-            print(length_of_database_contents)
+            #print(self.databaseContents)
+            #print(length_of_database_contents)
             num = 0
             while num < length_of_database_contents:
-                stuff_to_write = encryptor.encrypt((self.databaseContents[num][0] + " " + self.databaseContents[num][1] + " " + self.databaseContents[num][2].rstrip() + "\n").encode())
-                file.write(stuff_to_write + b'\n')
+                if self.databaseContents[num][0] != "" and self.databaseContents[num][1] != "" and self.databaseContents[num][2] != "":
+                    stuff_to_write = encryptor.encrypt((self.databaseContents[num][0] + " " + self.databaseContents[num][1] + " " + self.databaseContents[num][2].rstrip() + "\n").encode())
+                    file.write(stuff_to_write + b'\n')
                 num += 1
             file.close()
             self.create_database_panel()
@@ -163,6 +165,7 @@ class mainPanel(tk.Tk):
         self.create_database_panel()
         self.addEntryButton['state'] = 'active'
         self.saveButton['state'] = 'active'
+        self.filename = ""
 
     def add_database_entry(self):
         self.databaseContents.append(["", "", ""])

@@ -17,6 +17,6 @@ Project is planned to use the following libraries:
 
 # Current User Interface Design
 ## Main Panel
-![image](https://user-images.githubusercontent.com/48334359/159215764-53145b99-c547-406a-a048-905a646086c0.png)
+![image](https://user-images.githubusercontent.com/48334359/161469307-68de8f46-f6e0-480b-9933-304a7461dc4e.png)
 ## Edit Panel
-![image](https://user-images.githubusercontent.com/48334359/159215882-9e61a5d8-da01-486d-b615-8739d92b41de.png)
+![image](https://user-images.githubusercontent.com/48334359/161469321-bbbad190-2996-4446-847b-5ae7b36fbc08.png)

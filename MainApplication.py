@@ -114,24 +114,33 @@ class mainPanel(tk.Tk):
     def save_file(self):
         try:
             file = open(self.filename, 'wb')
+        except (AttributeError, FileNotFoundError, TypeError) as error:
+            self.filename = tk.filedialog.asksaveasfilename(initialdir = ".", title="Select the File to Open", filetypes=(("Database Files", ".xyz"), ))
+            if self.filename == "":
+                self.filename = "default"
+        file = open(self.filename, 'wb')
+        key = Fernet.generate_key()
+        encryptor = Fernet(key)
+        keyFile = open(self.filename + ".key", "wb")
+        keyFile.write(key)
+        keyFile.close()
 
-            key = Fernet.generate_key()
-            encryptor = Fernet(key)
-            keyFile = open(self.filename + ".key", "wb")
-            keyFile.write(key)
-            keyFile.close()
-
-            length_of_database_contents = len(self.databaseContents)
-            num = 0
-            while num < length_of_database_contents:
+        length_of_database_contents = len(self.databaseContents)
+        num = 0
+        while num < length_of_database_contents:
+            if self.databaseContents[num][0] != "" and self.databaseContents[num][1] != "" and self.databaseContents[num][2] != "":
                 stuff_to_write = encryptor.encrypt((self.databaseContents[num][0] + " " + self.databaseContents[num][1] + " " + self.databaseContents[num][2].rstrip() + "\n").encode())
                 file.write(stuff_to_write + b'\n')
-                num += 1
-            file.close()
-            self.create_database_panel()
-            self.pendingChanges = False
-            self.abortButton['state'] = "disabled"
+            #stuff_to_write = encryptor.encrypt((self.databaseContents[num][0] + " " + self.databaseContents[num][1] + " " + self.databaseContents[num][2].rstrip() + "\n").encode())
+            #file.write(stuff_to_write + b'\n')
+            num += 1
+        file.close()
+        self.create_database_panel()
+        self.pendingChanges = False
+        self.abortButton['state'] = "disabled"
+        self.title("SecuriSimplex Password Manager - " + self.filename.split("/")[len(self.filename.split("/")) - 1])
 
+        """
         except (AttributeError, FileNotFoundError, TypeError) as error:
             self.filename = tk.filedialog.asksaveasfilename(initialdir = ".", title="Select the File to Open", filetypes=(("Database Files", ".xyz"), ))
             if self.filename == "":
@@ -158,7 +167,7 @@ class mainPanel(tk.Tk):
             self.pendingChanges = False
             self.abortButton['state'] = "disabled"
             self.title("SecuriSimplex Password Manager - " + self.filename.split("/")[len(self.filename.split("/")) - 1])
-
+    """
     def closing_window(self):
         if self.pendingChanges == False:
             self.destroy()

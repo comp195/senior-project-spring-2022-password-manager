@@ -27,7 +27,7 @@ class mainPanel(tk.Tk):
         self.title("SecuriSimplex Password Manager")
         self.geometry("800x900")
         self.pendingChanges = False
-
+        self.protocol("WM_DELETE_WINDOW", self.closing_window)
 # ------------------------------- Program Info ------------------------------- #
 
 # ------------------------------- Creating Top Bar Buttons ------------------------------- #
@@ -95,7 +95,7 @@ class mainPanel(tk.Tk):
     def open_file(self):
         self.filename = tk.filedialog.askopenfilename(initialdir = ".", title="Select the File to Open", filetypes=(("All Files", "*"), ("Database Files", ".xyz"), ))
         self.keyfilename = tk.filedialog.askopenfilename(initialdir = ".", title="Select Key Used to Decrypt", filetypes = (("All Files", "*"), ("Keys", ".key"), ))
-        if self.filename is not None and self.filename != "":
+        if self.filename is not None and self.filename != "" and self.keyfilename is not None and self.keyfilename != "":
             self.databaseContents = openFile(self.filename, self.keyfilename)
             self.create_database_panel()
             self.addEntryButton['state'] = 'active'
@@ -159,6 +159,11 @@ class mainPanel(tk.Tk):
             self.abortButton['state'] = "disabled"
             self.title("SecuriSimplex Password Manager - " + self.filename.split("/")[len(self.filename.split("/")) - 1])
 
+    def closing_window(self):
+        if self.pendingChanges == False:
+            self.destroy()
+        else:
+            self.confirmationPanel = confirmationPanel()
 
     def create_file(self):
         self.databaseContents = [["", "", ""]]
@@ -183,6 +188,22 @@ class mainPanel(tk.Tk):
         self.dataFrameCanvas.update_idletasks()
         self.dataFrameCanvas.config(scrollregion=self.dataFrameCanvas.bbox("all"))
 
+class confirmationPanel(tk.Toplevel):
+    def __init__(self):
+        super().__init__()
+
+        self.title("Confirmation Panel")
+        self.geometry("300x110")
+
+        self.textLabel = tk.Label(self, text="You have unsaved changes. Are you sure you would like to close?", wraplength=250)
+        self.textLabel.pack(side="top")
+
+        self.yesButton = tk.Button(self, bg="white", text="Yes", width=10, relief="ridge", command=lambda a=0: self.nametowidget(self.winfo_parent()).destroy())
+        self.noButton = tk.Button(self, bg="white", text="No", width=10, relief="ridge", command=lambda a=0: self.destroy())
+        self.yesButton.pack(side="left", padx="20")
+        self.noButton.pack(side="right", padx="20")
+
+        self.resizable(False, False)
 
 class editPanel(tk.Toplevel):
     def __init__(self, databaseContent, num):
@@ -304,4 +325,5 @@ class editPanel(tk.Toplevel):
 if __name__ == "__main__":
     app = mainPanel()
     app.update()
+    ##app.protocol("WM_DELETE_WINDOW", app.iconify())
     app.mainloop()

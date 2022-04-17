@@ -104,10 +104,10 @@ class mainPanel(tk.Tk):
 
     def reopen_file(self):
         try:
-            self.databaseContents = openFile(self.filename)
+            self.databaseContents = openFile(self.filename, self.keyfilename)
             self.create_database_panel()
             self.abortButton['state'] = "disabled"
-        except AttributeError:
+        except (AttributeError, FileNotFoundError, TypeError) as error:
             self.databaseContents = [["", "", ""]]
             self.create_database_panel()
 

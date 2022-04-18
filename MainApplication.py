@@ -202,7 +202,7 @@ class confirmationPanel(tk.Toplevel):
         super().__init__()
 
         self.title("Confirmation Panel")
-        self.geometry("300x110")
+        self.geometry("300x140")
 
         self.textLabel = tk.Label(self, text="You have unsaved changes. Are you sure you would like to close?", wraplength=250)
         self.textLabel.pack(side="top")
@@ -219,7 +219,7 @@ class editPanel(tk.Toplevel):
         super().__init__()
 
         self.title("Edit panel")
-        self.geometry("300x110")
+        self.geometry("370x130")
 
         self.targetDatabaseContent = databaseContent[num]  # Each edit panel only stores the info necessary for its own use
 
@@ -252,13 +252,20 @@ class editPanel(tk.Toplevel):
         self.passEntry.grid(row=2, column=1)
         self.copyButton3.grid(row=2, column=2)
 
+        self.keepButton = tk.Button(self, text="Close/Keep Changes", relief='ridge')
+        self.keepButton['command'] = lambda a=num: self.close_edit_panel(a)
+        self.keepButton.grid(row=3, column=0, sticky='n')
+
+        self.clearButton = tk.Button(self, text="Clear Text", relief='ridge')
+        self.clearButton['command'] = self.clearEntry
+        self.clearButton.grid(row=3, column=1, sticky='n')
+
         self.unhideText = tk.IntVar()
         self.censorCheckbox = tk.Checkbutton(self, text='Unhide Text', variable=self.unhideText, onvalue=1, offvalue=0, command=self.toggle_text)
-        self.censorCheckbox.grid(row=3, column=1, sticky='n')
+        self.censorCheckbox.grid(row=3, column=2, sticky='n')
 
-        self.button = tk.Button(self, text="Close", relief='ridge')
-        self.button['command'] = lambda a=num: self.close_edit_panel(a)
-        self.button.grid(row=3, column=0, sticky='n')
+        self.extraText = tk.Label(self, text="Entries with empty sections will not be exported")
+        self.extraText.grid(row=4, columnspan=3)
 
         self.resizable(False, False)
 
@@ -298,6 +305,10 @@ class editPanel(tk.Toplevel):
         if num==2:
             self.clipboard_clear()
             self.clipboard_append(self.targetDatabaseContent[2])
+
+    def clearEntry(self):
+        print("2")
+
 
     def toggle_text(self):
         if self.unhideText.get() == 0:

@@ -221,7 +221,7 @@ class editPanel(tk.Toplevel):
         self.title("Edit panel")
         self.geometry("370x130")
 
-        self.targetDatabaseContent = databaseContent[num]  # Each edit panel only stores the info necessary for its own use
+        self.targetDatabaseContent = databaseContent[num].copy()  # Each edit panel only stores the info necessary for its own use
 
         self.descLabel = tk.Label(self, text="Description")
         self.descEntry = tk.Entry(self, width=25, bg="gray")
@@ -312,14 +312,17 @@ class editPanel(tk.Toplevel):
 
     def toggle_text(self):
         if self.unhideText.get() == 0:
+            self.targetDatabaseContent[0] = self.descEntry.get()
             self.descEntry.delete(0, "end")
             self.descEntry.insert(0, "**********")
             self.descEntry['state'] = 'disabled'
 
+            self.targetDatabaseContent[1] = self.accEntry.get()
             self.accEntry.delete(0, "end")
             self.accEntry.insert(0, "**********")
             self.accEntry['state'] = 'disabled'
 
+            self.targetDatabaseContent[2] = self.passEntry.get()
             self.passEntry.delete(0, "end")
             self.passEntry.insert(0, "**********")
             self.passEntry['state'] = 'disabled'

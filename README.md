@@ -9,6 +9,9 @@ all of your information in one place in a secure and encrypted fashion. While it
 not be as feature-rich as other options, it will be easily pilotable by a new user.
 The application is primarily targetted at Windows and will be built using Python.
 
+The program supports symmetric encryption. This ensures that the output file will be 
+unable to be decrypted unless the key file accompanies it.
+
 # Project Components
 Project currently uses the following libraries:
 1. TKinter

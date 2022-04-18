@@ -264,7 +264,7 @@ class editPanel(tk.Toplevel):
         self.censorCheckbox = tk.Checkbutton(self, text='Unhide Text', variable=self.unhideText, onvalue=1, offvalue=0, command=self.toggle_text)
         self.censorCheckbox.grid(row=3, column=2, sticky='n')
 
-        self.extraText = tk.Label(self, text="Entries with empty sections will not be exported")
+        self.extraText = tk.Label(self, text="Entries with empty sections will not be saved to exported file")
         self.extraText.grid(row=4, columnspan=3)
 
         self.resizable(False, False)
@@ -281,14 +281,14 @@ class editPanel(tk.Toplevel):
             parentWindow.databaseContents[num][2] = self.passEntry.get()
             parentWindow.create_database_panel()
 
-        elif self.unhideText == 0:
-            self.unhideText.set(1)
-            self.toggle_text()
+        if self.unhideText.get() == 0:
+            #self.unhideText.set(1)
+            #self.toggle_text()
             if parentWindow.databaseContents[num][0] != self.descEntry.get() or parentWindow.databaseContents[num][1] != self.accEntry.get() or parentWindow.databaseContents[num][2].rstrip() != self.passEntry.get():
                 parentWindow.pendingChanges = True
-            parentWindow.databaseContents[num][0] = self.descEntry.get()
-            parentWindow.databaseContents[num][1] = self.accEntry.get()
-            parentWindow.databaseContents[num][2] = self.passEntry.get()
+            parentWindow.databaseContents[num][0] = self.targetDatabaseContent[0]
+            parentWindow.databaseContents[num][1] = self.targetDatabaseContent[1]
+            parentWindow.databaseContents[num][2] = self.targetDatabaseContent[2]
             parentWindow.create_database_panel()
 
         if parentWindow.pendingChanges == True:
@@ -307,7 +307,20 @@ class editPanel(tk.Toplevel):
             self.clipboard_append(self.targetDatabaseContent[2])
 
     def clearEntry(self):
-        print("2")
+        if self.unhideText.get() == 0:
+            self.targetDatabaseContent[0] = ""
+            self.targetDatabaseContent[1] = ""
+            self.targetDatabaseContent[2] = ""
+        if self.unhideText.get() == 1:
+            self.targetDatabaseContent[0] = ""
+            self.targetDatabaseContent[1] = ""
+            self.targetDatabaseContent[2] = ""
+            self.descEntry.delete(0, "end")
+            self.descEntry.insert(0, self.targetDatabaseContent[0])
+            self.accEntry.delete(0, "end")
+            self.accEntry.insert(0, self.targetDatabaseContent[1])
+            self.passEntry.delete(0, "end")
+            self.passEntry.insert(0, self.targetDatabaseContent[2])
 
 
     def toggle_text(self):

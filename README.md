@@ -20,4 +20,4 @@ Project currently uses the following libraries:
 ## Main Panel
 ![image](https://user-images.githubusercontent.com/48334359/161469307-68de8f46-f6e0-480b-9933-304a7461dc4e.png)
 ## Edit Panel
-![image](https://user-images.githubusercontent.com/48334359/161469321-bbbad190-2996-4446-847b-5ae7b36fbc08.png)
+![image](https://user-images.githubusercontent.com/48334359/163769103-b20b6101-22cf-485c-a6a1-113a6dce0c18.png)

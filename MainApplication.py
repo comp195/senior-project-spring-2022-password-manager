@@ -107,6 +107,7 @@ class mainPanel(tk.Tk):
             self.databaseContents = openFile(self.filename, self.keyfilename)
             self.create_database_panel()
             self.abortButton['state'] = "disabled"
+            self.pendingChanges = False
         except (AttributeError, FileNotFoundError, TypeError) as error:
             self.databaseContents = [["", "", ""]]
             self.create_database_panel()
@@ -204,14 +205,23 @@ class confirmationPanel(tk.Toplevel):
         self.title("Confirmation Panel")
         self.geometry("300x140")
 
-        self.textLabel = tk.Label(self, text="You have unsaved changes. Are you sure you would like to close?", wraplength=250)
-        self.textLabel.pack(side="top")
-
         if confirmPurpose == 0:     # Quit Confirmation Window
+            self.textLabel = tk.Label(self, text="You have unsaved changes. Are you sure you would like to close?", wraplength=250)
+            self.textLabel.pack(side="top")
+
             self.yesButton = tk.Button(self, bg="white", text="Yes", width=10, relief="ridge", command=lambda a=0: self.nametowidget(self.winfo_parent()).destroy())
             self.noButton = tk.Button(self, bg="white", text="No", width=10, relief="ridge", command=lambda a=0: self.destroy())
             self.yesButton.pack(side="left", padx="20")
             self.noButton.pack(side="right", padx="20")
+
+        if confirmPurpose == 1:     # Unsaved Opened File -> Create File Confirmation Window
+            self.textLabel = tk.Label(self, text="You have unsaved changes. Are you sure you would like to create a file?", wraplength=250)
+            self.textLabel.pack(side="top")
+            self.yesButton = tk.Button(self, bg="white", text="Yes", width=10, relief="ridge", command=lambda a=0: self.nametowidget(self.winfo_parent()).destroy())
+            self.noButton = tk.Button(self, bg="white", text="No", width=10, relief="ridge", command=lambda a=0: self.destroy())
+            self.yesButton.pack(side="left", padx="20")
+            self.noButton.pack(side="right", padx="20")
+            # Add save
 
         self.resizable(False, False)
 

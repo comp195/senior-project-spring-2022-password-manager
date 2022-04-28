@@ -172,7 +172,7 @@ class mainPanel(tk.Tk):
         if self.pendingChanges == False:
             self.destroy()
         else:
-            self.confirmationPanel = confirmationPanel()
+            self.confirmationPanel = confirmationPanel(0)
 
     def create_file(self):
         self.databaseContents = [["", "", ""]]
@@ -198,7 +198,7 @@ class mainPanel(tk.Tk):
         self.dataFrameCanvas.config(scrollregion=self.dataFrameCanvas.bbox("all"))
 
 class confirmationPanel(tk.Toplevel):
-    def __init__(self):
+    def __init__(self, confirmPurpose):
         super().__init__()
 
         self.title("Confirmation Panel")
@@ -207,10 +207,11 @@ class confirmationPanel(tk.Toplevel):
         self.textLabel = tk.Label(self, text="You have unsaved changes. Are you sure you would like to close?", wraplength=250)
         self.textLabel.pack(side="top")
 
-        self.yesButton = tk.Button(self, bg="white", text="Yes", width=10, relief="ridge", command=lambda a=0: self.nametowidget(self.winfo_parent()).destroy())
-        self.noButton = tk.Button(self, bg="white", text="No", width=10, relief="ridge", command=lambda a=0: self.destroy())
-        self.yesButton.pack(side="left", padx="20")
-        self.noButton.pack(side="right", padx="20")
+        if confirmPurpose == 0:     # Quit Confirmation Window
+            self.yesButton = tk.Button(self, bg="white", text="Yes", width=10, relief="ridge", command=lambda a=0: self.nametowidget(self.winfo_parent()).destroy())
+            self.noButton = tk.Button(self, bg="white", text="No", width=10, relief="ridge", command=lambda a=0: self.destroy())
+            self.yesButton.pack(side="left", padx="20")
+            self.noButton.pack(side="right", padx="20")
 
         self.resizable(False, False)
 

@@ -192,10 +192,10 @@ class mainPanel(tk.Tk):
         if self.databaseContents is not None:
             for num in range(0, len(self.databaseContents)):
                 newButton = tk.Button(self.dataFrame, bg="white", text=self.databaseContents[num][0], height="5", relief="ridge", command=lambda a=num: self.open_edit_panel(a))
-                newTestButton = tk.Button(newButton, bg="white", text="down", height="5", width="4", relief="ridge")
-                newTestButton.pack(side="right", padx="2")
-                newTestButton = tk.Button(newButton, bg="white", text="up", height="5", width="4", relief="ridge")
-                newTestButton.pack(side="right", padx="2")
+                #newTestButton = tk.Button(newButton, bg="white", text="down", height="5", width="4", relief="ridge")
+                #newTestButton.pack(side="right", padx="2")
+                #newTestButton = tk.Button(newButton, bg="white", text="up", height="5", width="4", relief="ridge")
+                #newTestButton.pack(side="right", padx="2")
                 newButton.pack(side = "top", fill="x", expand=True)
                 self.accountInfo.append(newButton)  # Creating frame for data entries
         self.dataFrameCanvas.itemconfigure("dataFrame", width=self.winfo_width() - 35, anchor="n")

@@ -181,6 +181,7 @@ class mainPanel(tk.Tk):
         self.addEntryButton['state'] = 'active'
         self.saveButton['state'] = 'active'
         self.filename = ""
+        self.title("SecuriSimplex Password Manager")
 
     def add_database_entry(self):
         self.databaseContents.append(["", "", ""])

@@ -37,7 +37,7 @@ class mainPanel(tk.Tk):
         self.EditSaveFrame.pack_propagate(0) #Force the width and height
 
         self.createButton = tk.Button(self.EditSaveFrame, text="Create A File", relief="groove")  # Button for Creating a File
-        self.createButton['command'] = self.create_file
+        self.createButton['command'] = self.create_file_helper
         self.createButton.pack(side="left", fill="both", expand=True, padx="0")
 
         self.openButton = tk.Button(self.EditSaveFrame, text = "Open A File", relief="groove")   #Button for Opening a File
@@ -179,7 +179,8 @@ class mainPanel(tk.Tk):
         if self.pendingChanges == True:
             self.confirmationPanel = confirmationPanel(1)
         else:
-            self.create_file()
+            self.create_file_helper_2()
+
 
     def create_file(self):
         self.databaseContents = [["", "", ""]]
@@ -228,13 +229,17 @@ class confirmationPanel(tk.Toplevel):
         if confirmPurpose == 1:     # Unsaved Opened File -> Create File Confirmation Window
             self.textLabel = tk.Label(self, text="You have unsaved changes. Are you sure you would like to create a file?", wraplength=250)
             self.textLabel.pack(side="top")
-            self.yesButton = tk.Button(self, bg="white", text="Yes", width=10, relief="ridge", command=lambda a=0: self.nametowidget(self.winfo_parent()).create_file)
+            self.yesButton = tk.Button(self, bg="white", text="Yes", width=10, relief="ridge", command=lambda a=0: self.create_file_helper_2())
             self.noButton = tk.Button(self, bg="white", text="No", width=10, relief="ridge", command=lambda a=0: self.destroy())
             self.yesButton.pack(side="left", padx="20")
             self.noButton.pack(side="right", padx="20")
             # Add save
 
         self.resizable(False, False)
+
+    def create_file_helper_2(self):
+        self.nametowidget(self.winfo_parent()).create_file()
+        self.destroy()
 
 class editPanel(tk.Toplevel):
     def __init__(self, databaseContent, num):

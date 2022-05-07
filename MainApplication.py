@@ -181,6 +181,9 @@ class mainPanel(tk.Tk):
         else:
             self.create_file_helper_2()
 
+    def create_file_helper_2(self):
+        self.create_file()
+        #self.destroy()
 
     def create_file(self):
         self.databaseContents = [["", "", ""]]
@@ -237,9 +240,7 @@ class confirmationPanel(tk.Toplevel):
 
         self.resizable(False, False)
 
-    def create_file_helper_2(self):
-        self.nametowidget(self.winfo_parent()).create_file()
-        self.destroy()
+
 
 class editPanel(tk.Toplevel):
     def __init__(self, databaseContent, num):

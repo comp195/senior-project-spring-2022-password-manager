@@ -143,6 +143,7 @@ class mainPanel(tk.Tk):
         self.pendingChanges = False
         self.abortButton['state'] = "disabled"
         self.title("SecuriSimplex Password Manager - " + self.filename.split("/")[len(self.filename.split("/")) - 1])
+        self.keyfilename = self.filename + ".key"
 
         """
         except (AttributeError, FileNotFoundError, TypeError) as error:

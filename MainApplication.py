@@ -96,11 +96,14 @@ class mainPanel(tk.Tk):
         self.filename = tk.filedialog.askopenfilename(initialdir = ".", title="Select the File to Open", filetypes=(("All Files", "*"), ("Database Files", ".xyz"), ))
         self.keyfilename = tk.filedialog.askopenfilename(initialdir = ".", title="Select Key Used to Decrypt", filetypes = (("All Files", "*"), ("Keys", ".key"), ))
         if self.filename is not None and self.filename != "" and self.keyfilename is not None and self.keyfilename != "":
-            self.databaseContents = openFile(self.filename, self.keyfilename)
-            self.create_database_panel()
-            self.addEntryButton['state'] = 'active'
-            self.saveButton['state'] = 'active'
-            self.title("SecuriSimplex Password Manager - " + self.filename.split("/")[len(self.filename.split("/")) - 1])
+            try:
+                self.databaseContents = openFile(self.filename, self.keyfilename)
+                self.create_database_panel()
+                self.addEntryButton['state'] = 'active'
+                self.saveButton['state'] = 'active'
+                self.title("SecuriSimplex Password Manager - " + self.filename.split("/")[len(self.filename.split("/")) - 1])
+            except:
+                return
 
     def reopen_file(self):
         try:
